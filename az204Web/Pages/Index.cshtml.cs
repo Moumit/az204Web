@@ -8,10 +8,15 @@ namespace az204Web.Pages
     public class IndexModel : PageModel
     {
         public List<Product> Products;
-        public void OnGet()
+        private readonly IProductService _productService;
+        public IndexModel(IProductService productService)
         {
-            ProductService productService = new ProductService();
-            Products = productService.GetProducts();
+            _productService = productService;
+        }
+
+        public void OnGet()
+        { 
+            Products = _productService.GetProducts();
         }
     }
 }

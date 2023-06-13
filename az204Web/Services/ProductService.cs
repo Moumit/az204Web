@@ -3,28 +3,26 @@ using System.Data.SqlClient;
 
 namespace az204Web.Services
 {
-    public class ProductService
+    public class ProductService : IProductService
     {
-        private static readonly string db_source = "mkm.database.windows.net";
-        private static readonly string db_Name = "az204Test";
-        private static readonly string db_UserName = "az204vmadmin";
-        private static readonly string db_Password = "Az204vm@admin";
-        
 
-        private static SqlConnection GetConnection()
+        private readonly IConfiguration _configuration;
+
+        public ProductService(IConfiguration configuration)
         {
-            SqlConnectionStringBuilder con = new SqlConnectionStringBuilder();
-            con.DataSource = db_source;
-            con.InitialCatalog = db_Name;
-            con.UserID = db_UserName;
-            con.Password = db_Password;
-
-            return new SqlConnection(con.ConnectionString);
+            _configuration = configuration;
         }
 
-        public   List<Product> GetProducts()
+
+        private SqlConnection GetConnection()
         {
-            var con= GetConnection();
+
+            return new SqlConnection(_configuration.GetConnectionString("az204WebConnString"));
+        }
+
+        public List<Product> GetProducts()
+        {
+            var con = GetConnection();
             List<Product> products = new List<Product>();
             string selectProducts = "Select ProductId,Name,Quantity from Product";
             con.Open();
@@ -42,7 +40,7 @@ namespace az204Web.Services
                     products.Add(product);
                 }
             }
-             
+
 
             return products;
 
